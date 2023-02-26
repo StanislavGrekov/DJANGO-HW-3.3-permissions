@@ -1,5 +1,7 @@
 from django.core.management.base import BaseCommand
 from advertisements.models import Advertisement
+from django.contrib.auth.models import User
+
 
 class Command(BaseCommand):
     def add_arguments(self, parser):
@@ -7,6 +9,9 @@ class Command(BaseCommand):
 
 
     def handle(self, *args, **options):
+
+        # User.objects.create(username='user2', password = '123456', is_staff= False)
+
         # adv1 = Advertisement.objects.get(id=1)
         # print(adv1.creator.date_joined)
 

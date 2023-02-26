@@ -2,7 +2,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 from .models import Advertisement
 from .serializers import AdvertisementSerializer
-from .permissions import ForAny, IsAdmin, IsOwner
+from .permissions import ForAny, IsOwnerORadmin
 from .filters import AdvertisementFilter
 
 
@@ -17,10 +17,8 @@ class AdvertisementViewSet(ModelViewSet):
         """Получение прав для действий."""
         if self.action == "list":    # Просмотр - все пользователи
             return [ForAny()]
-        elif self.action in ["create", "partial_update"]:  # Cоздание, частичное изменение - аут.пользователи, владельцы
-            return [IsAuthenticated(), IsOwner()]
-        elif self.action in ["update", "destroy"]:   # Изменение и удаление только администраторы
-            return [IsAdmin()]
+        elif self.action in ["create", "partial_update", "update", "destroy"]:
+            return [IsAuthenticated(), IsOwnerORadmin()]
         return []
 
 

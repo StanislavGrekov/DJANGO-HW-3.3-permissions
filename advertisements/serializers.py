@@ -48,10 +48,18 @@ class AdvertisementSerializer(serializers.ModelSerializer):
     def validate(self, data):
         # print(dir(self.context['request']))
         # print(dir(self.context))
-        adv_limit = 10
-        if Advertisement.objects.filter(creator = self.context['request'].user).count() >= adv_limit:
-            raise ValidationError('У вас более 10 объявлений')
-        return data
+        request_adv_status = self.context['request'].data.get('status') # Запрашиваем статус обявления на случай, если нужно закрыть объявление
+        if request_adv_status  == 'CLOSED': # Если в запросе приходит статус CLOSED то закрываем объявление
+            return data
+        else: # Иначе считаем кол-во открытых объявлений
+            adv_limit = 10
+            list_adv_OPEN =[]
+            for adv in Advertisement.objects.filter(creator = self.context['request'].user):
+                if adv.status == 'OPEN':
+                    list_adv_OPEN.append(adv.status)
+            if len(list_adv_OPEN) > adv_limit:
+                raise ValidationError('У вас более 10 открытых объявлений, закройте какое-либо объявление')
+            return data
 
 
     def to_representation(self, instance):
